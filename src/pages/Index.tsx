@@ -1,13 +1,21 @@
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/Button";
-import { Card, CardContent } from "@/components/ui/Card";
-import { ArrowRight, Calendar, FileClock, Users, Shield, Award, BarChart, Heart } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { 
+  ArrowRight, Calendar, FileClock, Users, Shield, Award, 
+  BarChart, Heart, Video, MessageSquare, Zap, Sparkles
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import RoleSelector from "@/components/home/RoleSelector";
+import DemoRequestForm from "@/components/home/DemoRequestForm";
 
 const Index = () => {
+  const { toast } = useToast();
+  const [showDemoModal, setShowDemoModal] = useState(false);
   const featuresRef = useRef<HTMLDivElement>(null);
   const forVetsRef = useRef<HTMLDivElement>(null);
   const forPetOwnersRef = useRef<HTMLDivElement>(null);
@@ -49,48 +57,58 @@ const Index = () => {
     },
   ];
 
+  const handleDemoRequest = () => {
+    setShowDemoModal(true);
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      {/* Hero Section */}
-      <section className="pt-28 md:pt-36 lg:pt-40 pb-16 md:pb-20 lg:pb-32">
+      {/* Hero Section - Updated with gradient and more engaging design */}
+      <section className="relative pt-28 md:pt-36 lg:pt-32 pb-16 md:pb-20 lg:pb-24 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10 -z-10"></div>
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10"></div>
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10"></div>
+        
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col lg:flex-row items-center gap-12">
             <div className="flex-1 space-y-8 text-center lg:text-left animate-fade-in">
               <div>
                 <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-                  Introducing PetCareAI
+                  The Future of Pet Healthcare
                 </span>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-balance">
-                  The intelligent platform for
+                  Smart Healthcare for
                   <span className="block mt-2 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                    modern pet healthcare
+                    Furry Friends
                   </span>
                 </h1>
               </div>
               <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto lg:mx-0">
-                Streamline your pet health records, simplify clinic operations, and build a supportive
-                community for vets with our all-in-one intelligent platform.
+                Digitize, streamline, and grow your pet healthcare community with our 
+                all-in-one intelligent platform built for the next generation.
               </p>
               <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-                <Link to="/register">
-                  <Button variant="primary" size="lg" className="font-medium text-base px-6 py-6">
-                    Get started for free
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-                <Link to="/login">
-                  <Button variant="outline" size="lg" className="font-medium text-base px-6 py-6">
-                    Sign in
-                  </Button>
-                </Link>
+                <Button 
+                  variant="default" 
+                  size="lg" 
+                  className="font-medium text-base px-6 py-6 bg-primary hover:bg-primary/90"
+                  onClick={handleDemoRequest}
+                >
+                  Request a demo
+                  <Video className="ml-2 h-5 w-5" />
+                </Button>
+                <Button variant="outline" size="lg" className="font-medium text-base px-6 py-6">
+                  Learn more
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
               </div>
             </div>
             <div className="flex-1 w-full max-w-md mx-auto lg:mx-0 animate-slide-up">
               <div className="relative">
                 <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-primary/10 rounded-3xl blur-xl"></div>
-                <Card className="relative glass-card shadow-xl overflow-hidden rounded-3xl border-0">
+                <Card className="relative overflow-hidden rounded-3xl border-0 p-0">
                   <img 
                     src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=2068&auto=format&fit=crop&ixlib=rb-4.0.3"
                     alt="Veterinarian with dog"
@@ -100,6 +118,18 @@ const Index = () => {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+      
+      {/* Role Selection Section - New */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold">Find Your Path</h2>
+            <p className="text-muted-foreground mt-2">Choose your role to get started with PetCareAI</p>
+          </div>
+          
+          <RoleSelector />
         </div>
       </section>
       
@@ -127,7 +157,7 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Features Section */}
+      {/* Features Section - Enhanced with new icons */}
       <section ref={featuresRef} id="features" className="py-20 md:py-28">
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-16">
@@ -147,9 +177,7 @@ const Index = () => {
             {features.map((feature, index) => (
               <Card 
                 key={index} 
-                variant="hover" 
-                className="animate-scale-in" 
-                style={{ animationDelay: `${index * 100}ms` }}
+                className="overflow-hidden transition-all duration-300 hover:shadow-md hover:translate-y-[-2px]" 
               >
                 <CardContent className="space-y-4 p-6">
                   <div className="p-3 rounded-full bg-primary/10 w-fit">
@@ -164,14 +192,14 @@ const Index = () => {
         </div>
       </section>
       
-      {/* For Vets Section */}
+      {/* For Vets Section - Enhanced with gamification highlights */}
       <section ref={forVetsRef} id="for-vets" className="py-20 md:py-28 bg-primary/5">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col lg:flex-row items-center gap-16">
             <div className="flex-1 animate-slide-up">
               <div className="relative">
                 <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-primary/10 rounded-3xl blur-xl"></div>
-                <Card className="relative glass-card shadow-xl overflow-hidden rounded-3xl border-0">
+                <Card className="relative overflow-hidden rounded-3xl border-0 p-0">
                   <img 
                     src="https://images.unsplash.com/photo-1581888227599-779811939961?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3"
                     alt="Vet with animal patient"
@@ -225,7 +253,9 @@ const Index = () => {
               
               <div>
                 <Link to="/register?role=vet">
-                  <Button variant="primary" className="font-medium">
+                  <Button 
+                    className="font-medium bg-primary hover:bg-primary/90"
+                  >
                     Join as a Vet
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
@@ -284,7 +314,9 @@ const Index = () => {
               
               <div>
                 <Link to="/register?role=pet_owner">
-                  <Button variant="primary" className="font-medium">
+                  <Button 
+                    className="font-medium bg-primary hover:bg-primary/90"
+                  >
                     Sign up as Pet Owner
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
@@ -294,7 +326,7 @@ const Index = () => {
             <div className="flex-1 animate-slide-up">
               <div className="relative">
                 <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-primary/10 rounded-3xl blur-xl"></div>
-                <Card className="relative glass-card shadow-xl overflow-hidden rounded-3xl border-0">
+                <Card className="relative overflow-hidden rounded-3xl border-0 p-0">
                   <img 
                     src="https://images.unsplash.com/photo-1450778869180-41d0601e046e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3"
                     alt="Dog owner with pet"
@@ -307,7 +339,7 @@ const Index = () => {
         </div>
       </section>
       
-      {/* CTA Section */}
+      {/* CTA Section - Enhanced with more options */}
       <section className="py-20 md:py-28 bg-primary/5">
         <div className="container mx-auto px-4 md:px-6">
           <div className="max-w-3xl mx-auto text-center space-y-6 animate-fade-in">
@@ -323,20 +355,32 @@ const Index = () => {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
               <Link to="/register">
-                <Button variant="primary" size="lg" className="font-medium text-base px-6 py-6">
+                <Button 
+                  size="lg" 
+                  className="font-medium text-base px-6 py-6 bg-primary hover:bg-primary/90"
+                >
                   Create your free account
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Link to="/contact">
-                <Button variant="outline" size="lg" className="font-medium text-base px-6 py-6">
-                  Contact sales
-                </Button>
-              </Link>
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="font-medium text-base px-6 py-6"
+                onClick={handleDemoRequest}
+              >
+                Request a demo
+                <Video className="ml-2 h-5 w-5" />
+              </Button>
             </div>
           </div>
         </div>
       </section>
+      
+      {/* Demo Request Modal */}
+      {showDemoModal && (
+        <DemoRequestForm onClose={() => setShowDemoModal(false)} />
+      )}
       
       <Footer />
     </div>

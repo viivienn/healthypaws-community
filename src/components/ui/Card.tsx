@@ -1,6 +1,7 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { Card as ShadcnCard, CardContent as ShadcnCardContent, CardHeader as ShadcnCardHeader, CardFooter as ShadcnCardFooter, CardTitle as ShadcnCardTitle, CardDescription as ShadcnCardDescription } from "@/components/ui/card";
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: "default" | "glass" | "hover" | "interactive";
@@ -12,21 +13,21 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
     const baseStyles = "rounded-2xl transition-all duration-300";
     
     const variantStyles = {
-      default: "bg-card text-card-foreground shadow-sm",
+      default: "",
       glass: "glass-card",
-      hover: "bg-card text-card-foreground shadow-sm hover:shadow-md hover:translate-y-[-2px]",
-      interactive: "bg-card text-card-foreground shadow-sm hover:shadow-md hover:translate-y-[-2px] active:translate-y-[0px] active:shadow-sm",
+      hover: "hover:shadow-md hover:translate-y-[-2px]",
+      interactive: "hover:shadow-md hover:translate-y-[-2px] active:translate-y-[0px] active:shadow-sm",
     };
     
     const paddingStyles = {
-      none: "p-0",
-      sm: "p-3",
-      md: "p-5",
-      lg: "p-7",
+      none: variant === "default" ? "" : "p-0",
+      sm: variant === "default" ? "" : "p-3",
+      md: variant === "default" ? "" : "p-5",
+      lg: variant === "default" ? "" : "p-7",
     };
     
     return (
-      <div
+      <ShadcnCard
         ref={ref}
         className={cn(
           baseStyles,
@@ -37,7 +38,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
         {...props}
       >
         {children}
-      </div>
+      </ShadcnCard>
     );
   }
 );
@@ -48,7 +49,7 @@ const CardHeader = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div
+  <ShadcnCardHeader
     ref={ref}
     className={cn("flex flex-col space-y-1.5", className)}
     {...props}
@@ -60,7 +61,7 @@ const CardTitle = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, ...props }, ref) => (
-  <h3
+  <ShadcnCardTitle
     ref={ref}
     className={cn(
       "text-xl font-semibold leading-tight tracking-tight",
@@ -75,7 +76,7 @@ const CardDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => (
-  <p
+  <ShadcnCardDescription
     ref={ref}
     className={cn("text-sm text-muted-foreground", className)}
     {...props}
@@ -87,7 +88,7 @@ const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("", className)} {...props} />
+  <ShadcnCardContent ref={ref} className={cn("", className)} {...props} />
 ));
 CardContent.displayName = "CardContent";
 
@@ -95,7 +96,7 @@ const CardFooter = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div
+  <ShadcnCardFooter
     ref={ref}
     className={cn("flex items-center pt-3", className)}
     {...props}
