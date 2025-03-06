@@ -25,8 +25,7 @@ const Navbar = () => {
   const navItems = [
     { label: "Home", path: "/" },
     { label: "Features", path: "/#features" },
-    { label: "For Vets", path: "/#for-vets" },
-    { label: "For Pet Owners", path: "/#for-pet-owners" },
+    { label: "Community", path: "/#community" },
   ];
 
   return (
@@ -41,7 +40,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
             <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-              PetCareAI
+              Clinecto
             </span>
           </Link>
 
@@ -59,6 +58,14 @@ const Navbar = () => {
               ))}
             </div>
             <div className="flex items-center space-x-3">
+              <Button 
+                variant="outline" 
+                className="flex items-center gap-2"
+                onClick={() => window.dispatchEvent(new CustomEvent('open-demo-modal'))}
+              >
+                <span>Request a Demo</span>
+                <Video className="h-4 w-4" />
+              </Button>
               <Link to="/login">
                 <Button variant="ghost">Log in</Button>
               </Link>
@@ -95,6 +102,14 @@ const Navbar = () => {
                 {item.label}
               </Link>
             ))}
+            <Button 
+              variant="outline" 
+              className="flex items-center justify-center gap-2"
+              onClick={() => window.dispatchEvent(new CustomEvent('open-demo-modal'))}
+            >
+              <span>Request a Demo</span>
+              <Video className="h-4 w-4" />
+            </Button>
             <div className="flex flex-col space-y-3 pt-3 border-t border-border/30">
               <Link to="/login">
                 <Button variant="ghost" className="w-full">Log in</Button>

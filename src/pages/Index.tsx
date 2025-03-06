@@ -17,8 +17,7 @@ const Index = () => {
   const { toast } = useToast();
   const [showDemoModal, setShowDemoModal] = useState(false);
   const featuresRef = useRef<HTMLDivElement>(null);
-  const forVetsRef = useRef<HTMLDivElement>(null);
-  const forPetOwnersRef = useRef<HTMLDivElement>(null);
+  const communityRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     // Handle hash navigation
@@ -26,12 +25,18 @@ const Index = () => {
       const hash = window.location.hash.substring(1);
       if (hash === "features" && featuresRef.current) {
         featuresRef.current.scrollIntoView({ behavior: "smooth" });
-      } else if (hash === "for-vets" && forVetsRef.current) {
-        forVetsRef.current.scrollIntoView({ behavior: "smooth" });
-      } else if (hash === "for-pet-owners" && forPetOwnersRef.current) {
-        forPetOwnersRef.current.scrollIntoView({ behavior: "smooth" });
+      } else if (hash === "community" && communityRef.current) {
+        communityRef.current.scrollIntoView({ behavior: "smooth" });
       }
     }
+
+    // Listen for demo modal open events
+    const handleOpenDemoModal = () => setShowDemoModal(true);
+    window.addEventListener('open-demo-modal', handleOpenDemoModal);
+    
+    return () => {
+      window.removeEventListener('open-demo-modal', handleOpenDemoModal);
+    };
   }, []);
 
   const features = [
@@ -47,7 +52,7 @@ const Index = () => {
     },
     {
       icon: <Users className="w-6 h-6 text-primary" />,
-      title: "Vet Community",
+      title: "Community Network",
       description: "Connect with a network of veterinary professionals for support, knowledge sharing, and collaboration."
     },
     {
@@ -65,7 +70,7 @@ const Index = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      {/* Hero Section - Updated with gradient and more engaging design */}
+      {/* Hero Section */}
       <section className="relative pt-28 md:pt-36 lg:pt-32 pb-16 md:pb-20 lg:pb-24 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10 -z-10"></div>
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10"></div>
@@ -81,7 +86,7 @@ const Index = () => {
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-balance">
                   Smart Healthcare for
                   <span className="block mt-2 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                    Furry Friends
+                    Pets & Communities
                   </span>
                 </h1>
               </div>
@@ -121,12 +126,12 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Role Selection Section - New */}
+      {/* Role Selection Section */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold">Find Your Path</h2>
-            <p className="text-muted-foreground mt-2">Choose your role to get started with PetCareAI</p>
+            <p className="text-muted-foreground mt-2">Choose your role to get started with Clinecto</p>
           </div>
           
           <RoleSelector />
@@ -157,7 +162,7 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Features Section - Enhanced with new icons */}
+      {/* Features Section */}
       <section ref={featuresRef} id="features" className="py-20 md:py-28">
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-16">
@@ -192,8 +197,8 @@ const Index = () => {
         </div>
       </section>
       
-      {/* For Vets Section - Enhanced with gamification highlights */}
-      <section ref={forVetsRef} id="for-vets" className="py-20 md:py-28 bg-primary/5">
+      {/* Community Section */}
+      <section ref={communityRef} id="community" className="py-20 md:py-28 bg-primary/5">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col lg:flex-row items-center gap-16">
             <div className="flex-1 animate-slide-up">
@@ -202,7 +207,7 @@ const Index = () => {
                 <Card className="relative overflow-hidden rounded-3xl border-0 p-0">
                   <img 
                     src="https://images.unsplash.com/photo-1581888227599-779811939961?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3"
-                    alt="Vet with animal patient"
+                    alt="Veterinary community"
                     className="w-full h-[400px] object-cover"
                   />
                 </Card>
@@ -210,15 +215,15 @@ const Index = () => {
             </div>
             <div className="flex-1 space-y-8 text-center lg:text-left animate-fade-in">
               <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
-                For Veterinarians
+                Community
               </span>
               <h2 className="text-3xl md:text-4xl font-bold">
-                A supportive community for <span className="text-primary">new vets</span>
+                A supportive community for <span className="text-primary">veterinary professionals</span>
               </h2>
               <p className="text-muted-foreground text-lg">
-                PetCareAI creates a vibrant, gamified community designed specifically for
-                millennial and Gen Z veterinarians. Build your network, share knowledge,
-                and grow professionally in an engaging environment.
+                Clinecto creates a vibrant, professional community designed for 
+                veterinarians. Build your network, share knowledge,
+                and grow professionally in a collaborative environment.
               </p>
               
               <div className="space-y-4">
@@ -227,8 +232,8 @@ const Index = () => {
                     <Award className="w-5 h-5 text-primary" />
                   </div>
                   <div className="text-left">
-                    <h3 className="font-medium">Gamified Learning</h3>
-                    <p className="text-sm text-muted-foreground">Earn badges and climb leaderboards as you document cases and share insights</p>
+                    <h3 className="font-medium">Professional Development</h3>
+                    <p className="text-sm text-muted-foreground">Earn recognition as you document cases and share insights with colleagues</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -266,81 +271,8 @@ const Index = () => {
         </div>
       </section>
       
-      {/* For Pet Owners Section */}
-      <section ref={forPetOwnersRef} id="for-pet-owners" className="py-20 md:py-28">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col-reverse lg:flex-row items-center gap-16">
-            <div className="flex-1 space-y-8 text-center lg:text-left animate-fade-in">
-              <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
-                For Pet Owners
-              </span>
-              <h2 className="text-3xl md:text-4xl font-bold">
-                Simple, secure <span className="text-primary">pet health management</span>
-              </h2>
-              <p className="text-muted-foreground text-lg">
-                Keep all your pet's health information in one place. From vaccination records to appointment
-                scheduling, PetCareAI makes it easy to stay on top of your pet's health needs.
-              </p>
-              
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-full bg-primary/10 shrink-0">
-                    <FileClock className="w-5 h-5 text-primary" />
-                  </div>
-                  <div className="text-left">
-                    <h3 className="font-medium">Complete Digital Records</h3>
-                    <p className="text-sm text-muted-foreground">Store all health records, prescriptions, and test results in one secure location</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-full bg-primary/10 shrink-0">
-                    <Calendar className="w-5 h-5 text-primary" />
-                  </div>
-                  <div className="text-left">
-                    <h3 className="font-medium">Smart Reminders</h3>
-                    <p className="text-sm text-muted-foreground">Never miss an appointment, vaccination, or medication refill again</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-full bg-primary/10 shrink-0">
-                    <Heart className="w-5 h-5 text-primary" />
-                  </div>
-                  <div className="text-left">
-                    <h3 className="font-medium">Personalized Health Insights</h3>
-                    <p className="text-sm text-muted-foreground">Receive tailored recommendations based on your pet's health history</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div>
-                <Link to="/register?role=pet_owner">
-                  <Button 
-                    className="font-medium bg-primary hover:bg-primary/90"
-                  >
-                    Sign up as Pet Owner
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-            <div className="flex-1 animate-slide-up">
-              <div className="relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-primary/10 rounded-3xl blur-xl"></div>
-                <Card className="relative overflow-hidden rounded-3xl border-0 p-0">
-                  <img 
-                    src="https://images.unsplash.com/photo-1450778869180-41d0601e046e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3"
-                    alt="Dog owner with pet"
-                    className="w-full h-[400px] object-cover"
-                  />
-                </Card>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      
-      {/* CTA Section - Enhanced with more options */}
-      <section className="py-20 md:py-28 bg-primary/5">
+      {/* CTA Section */}
+      <section className="py-20 md:py-28 bg-white">
         <div className="container mx-auto px-4 md:px-6">
           <div className="max-w-3xl mx-auto text-center space-y-6 animate-fade-in">
             <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
@@ -350,7 +282,7 @@ const Index = () => {
               Ready to transform your pet healthcare experience?
             </h2>
             <p className="text-muted-foreground text-lg">
-              Join thousands of pet owners, vets, and clinics already using PetCareAI to
+              Join thousands of pet owners, vets, and clinics already using Clinecto to
               streamline healthcare management and build professional communities.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
