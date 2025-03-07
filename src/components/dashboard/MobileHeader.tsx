@@ -9,7 +9,7 @@ interface MobileHeaderProps {
 const MobileHeader = ({ onLogout }: MobileHeaderProps) => (
   <header className="md:hidden flex items-center justify-between p-4 border-b">
     <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-      Clinecto
+      HealthyPaws
     </h1>
     <Button variant="ghost" size="icon" onClick={onLogout}>
       <LogOut className="h-5 w-5" />

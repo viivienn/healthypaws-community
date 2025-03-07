@@ -1,8 +1,6 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 // Import refactored components
@@ -13,7 +11,6 @@ import PetSelector from "@/components/dashboard/PetSelector";
 import PetProfile from "@/components/dashboard/PetProfile";
 import HealthReminders from "@/components/dashboard/HealthReminders";
 import RecentActivity from "@/components/dashboard/RecentActivity";
-import AccountInfo from "@/components/dashboard/AccountInfo";
 import CommunityTeaser from "@/components/dashboard/CommunityTeaser";
 
 interface User {
@@ -65,7 +62,7 @@ const Dashboard = () => {
           age: 3,
           nextAppointment: "2023-04-15",
           nextVaccination: "2023-05-10",
-          photoUrl: undefined
+          photoUrl: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1"
         }
       ];
       localStorage.setItem('pets', JSON.stringify(mockPets));
@@ -103,30 +100,22 @@ const Dashboard = () => {
   };
 
   const handleScheduleAppointment = (petId: string) => {
-    toast({
-      title: "Schedule Appointment",
-      description: `Scheduling appointment for pet ID: ${petId}`,
-    });
+    navigate('/appointments');
   };
 
   const handleUpdateRecords = (petId: string) => {
-    toast({
-      title: "Update Records",
-      description: `Updating records for pet ID: ${petId}`,
-    });
+    navigate('/health-records');
   };
 
   const getWelcomeMessage = () => {
-    const hour = new Date().getHours();
-    const timeOfDay = hour < 12 ? "morning" : hour < 18 ? "afternoon" : "evening";
     const activePet = getActivePet();
     
-    if (user && activePet) {
-      return `Good ${timeOfDay}, ${user.name}! Here's what's new with ${activePet.name}.`;
-    } else if (user && pets.length === 0) {
-      return `Good ${timeOfDay}, ${user.name}! Let's add your pet.`;
+    if (activePet) {
+      return `Here's what's new with ${activePet.name}`;
+    } else if (pets.length === 0) {
+      return "Let's add your pet to get started";
     } else {
-      return `Good ${timeOfDay}!`;
+      return "Your pet dashboard";
     }
   };
 
@@ -179,9 +168,6 @@ const Dashboard = () => {
 
             {/* Recent Activity Card */}
             <RecentActivity activePet={activePet} />
-
-            {/* Account Info (Minimized) */}
-            <AccountInfo user={user} />
 
             {/* Community Teaser */}
             <CommunityTeaser activePet={activePet} />

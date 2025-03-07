@@ -1,30 +1,39 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Mail, Key } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setLoading(true);
 
-    // Simulate an authentication process
+    // Basic email validation
+    if (!email.includes('@')) {
+      toast({
+        title: "Invalid email format",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+
+    // Mock authentication - replace with real API call
     setTimeout(() => {
       if (email === "test@example.com" && password === "password") {
         localStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('user', JSON.stringify({
           name: "Test User",
-          email: email,
-          role: "user",
-          provider: "credentials"
+          email: "test@example.com",
+          role: "Owner",
+          provider: null
         }));
         toast({
           title: "Login successful",
@@ -33,8 +42,8 @@ const Login = () => {
         navigate('/dashboard');
       } else {
         toast({
-          title: "Login failed",
-          description: "Invalid credentials. Please try again.",
+          title: "Invalid credentials",
+          description: "Please check your email and password.",
           variant: "destructive",
         });
       }
@@ -43,54 +52,48 @@ const Login = () => {
   };
 
   return (
-    <div className="grid h-screen place-items-center bg-gray-100">
-      <Card className="w-96">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center">Login</CardTitle>
-          <CardDescription className="text-center">Enter your email and password to login</CardDescription>
+    <div className="grid h-screen place-items-center">
+      <Card className="w-[350px]">
+        <CardHeader>
+          <CardTitle>Login</CardTitle>
+          <CardDescription>Enter your email and password to login</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
-          <div className="grid gap-2">
-            <label htmlFor="email">Email</label>
-            <div className="relative">
-              <Mail className="absolute left-2.5 top-2.5 h-5 w-5 text-gray-500 peer-focus:text-gray-900" />
+          <form onSubmit={handleSubmit}>
+            <div className="grid gap-2">
+              <label htmlFor="email">Email</label>
               <input
                 type="email"
                 id="email"
-                placeholder="Enter your email"
-                className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 pl-9 text-sm shadow-sm placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:cursor-not-allowed disabled:opacity-50"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                className="border border-gray-300 rounded px-4 py-2"
+                placeholder="test@example.com"
               />
             </div>
-          </div>
-          <div className="grid gap-2">
-            <label htmlFor="password">Password</label>
-            <div className="relative">
-              <Key className="absolute left-2.5 top-2.5 h-5 w-5 text-gray-500 peer-focus:text-gray-900" />
+            <div className="grid gap-2">
+              <label htmlFor="password">Password</label>
               <input
-                type={showPassword ? "text" : "password"}
+                type="password"
                 id="password"
-                placeholder="Enter your password"
-                className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 pl-9 text-sm shadow-sm placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:cursor-not-allowed disabled:opacity-50"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                className="border border-gray-300 rounded px-4 py-2"
+                placeholder="password"
               />
-              {showPassword ? (
-                <EyeOff className="absolute right-2.5 top-2.5 h-5 w-5 text-gray-500 hover:text-gray-900 cursor-pointer" onClick={() => setShowPassword(!showPassword)} />
-              ) : (
-                <Eye className="absolute right-2.5 top-2.5 h-5 w-5 text-gray-500 hover:text-gray-900 cursor-pointer" onClick={() => setShowPassword(!showPassword)} />
-              )}
             </div>
-          </div>
+            <Button disabled={loading} type="submit" className="w-full mt-4">
+              {loading ? "Logging in..." : "Login"}
+            </Button>
+          </form>
         </CardContent>
-        <CardFooter className="flex justify-center">
-          <Button onClick={handleSubmit} disabled={loading} isLoading={loading}>
-            {loading ? "Logging in..." : "Login"}
-          </Button>
-        </CardFooter>
-        <CardFooter className="w-full flex justify-center text-sm">
-          Don't have an account? <Link to="/register" className="text-blue-600 hover:underline ml-1">Register</Link>
+        <CardFooter className="flex justify-between">
+          <Link to="/register" className="text-sm text-muted-foreground hover:text-primary">
+            Don't have an account?
+          </Link>
+          <Link to="/" className="text-sm text-muted-foreground hover:text-primary">
+            Forgot Password?
+          </Link>
         </CardFooter>
       </Card>
     </div>
