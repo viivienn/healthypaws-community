@@ -1,5 +1,5 @@
 
-import { Calendar, FileText, Paw, PlusCircle } from "lucide-react";
+import { Calendar, FileText, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -41,7 +41,7 @@ const PetProfile = ({
         {pets.length === 0 ? (
           <div className="flex flex-col items-center justify-center space-y-4 py-8">
             <div className="w-24 h-24 bg-muted/50 rounded-full flex items-center justify-center">
-              <Paw className="h-12 w-12 text-muted-foreground/50" />
+              <div className="h-12 w-12 text-muted-foreground/50 text-4xl font-light">🐾</div>
             </div>
             <p className="text-muted-foreground text-center">
               Add your pet to get personalized care recommendations
@@ -65,7 +65,7 @@ const PetProfile = ({
                     className="w-full h-full object-cover rounded-full"
                   />
                 ) : (
-                  <Paw className="h-12 w-12 text-primary/70" />
+                  <div className="h-12 w-12 text-primary/70 text-4xl font-light">🐾</div>
                 )}
                 <button className="absolute bottom-0 right-0 bg-background rounded-full p-1 shadow-sm border border-border opacity-0 group-hover:opacity-100 transition-opacity">
                   <PlusCircle className="h-4 w-4 text-muted-foreground" />

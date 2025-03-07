@@ -1,5 +1,4 @@
 
-// Note: Renamed the import to avoid casing conflicts
 import { Button as ShadcnButton } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { forwardRef } from "react";

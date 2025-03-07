@@ -1,5 +1,5 @@
 
-import { Paw, PlusCircle } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 
 interface Pet {
   id: string;
@@ -37,7 +37,9 @@ const PetSelector = ({ pets, activePetId, onSelectPet, onAddPet }: PetSelectorPr
                 className="w-full h-full object-cover rounded-full"
               />
             ) : (
-              <Paw className="h-6 w-6 text-primary/70" />
+              <div className="text-primary/70 font-bold text-lg">
+                {pet.name.charAt(0).toUpperCase()}
+              </div>
             )}
           </div>
           <span className="text-sm font-medium truncate max-w-[80px]">{pet.name}</span>
