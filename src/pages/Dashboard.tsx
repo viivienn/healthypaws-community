@@ -4,7 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button"; // Fixed casing
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"; // Fixed casing
 import { toast } from "@/hooks/use-toast";
-import { Activity, Calendar, FileText, Users, LogOut, PlusCircle, Clock, Settings, Home } from "lucide-react";
+import { 
+  Activity, Calendar, FileText, Users, LogOut, PlusCircle, 
+  Clock, Settings, Home, Paw, Bell, Syringe, Heart
+} from "lucide-react";
 
 interface User {
   name: string;
@@ -13,8 +16,21 @@ interface User {
   provider?: string;
 }
 
+interface Pet {
+  id: string;
+  name: string;
+  species: string;
+  breed: string;
+  age: number;
+  nextAppointment?: string;
+  nextVaccination?: string;
+  photoUrl?: string;
+}
+
 const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [pets, setPets] = useState<Pet[]>([]);
+  const [activePetId, setActivePetId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,6 +46,31 @@ const Dashboard = () => {
     if (userData) {
       setUser(JSON.parse(userData));
     }
+
+    // Mock pet data - in a real app, this would come from an API
+    if (localStorage.getItem('pets') === null) {
+      const mockPets = [
+        {
+          id: "1",
+          name: "Max",
+          species: "Dog",
+          breed: "Golden Retriever",
+          age: 3,
+          nextAppointment: "2023-04-15",
+          nextVaccination: "2023-05-10",
+          photoUrl: undefined
+        }
+      ];
+      localStorage.setItem('pets', JSON.stringify(mockPets));
+      setPets(mockPets);
+      setActivePetId("1");
+    } else {
+      const storedPets = JSON.parse(localStorage.getItem('pets') || '[]');
+      setPets(storedPets);
+      if (storedPets.length > 0) {
+        setActivePetId(storedPets[0].id);
+      }
+    }
   }, [navigate]);
 
   const handleLogout = () => {
@@ -42,38 +83,51 @@ const Dashboard = () => {
     navigate('/login');
   };
 
-  if (!user) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  }
+  const getActivePet = () => {
+    return pets.find(pet => pet.id === activePetId) || null;
+  };
 
-  const getQuickActions = () => {
-    if (user.role === 'pet_owner') {
-      return [
-        { label: "Add a new pet", icon: <PlusCircle className="h-5 w-5" /> },
-        { label: "Schedule an appointment", icon: <Calendar className="h-5 w-5" /> },
-        { label: "View health records", icon: <FileText className="h-5 w-5" /> }
-      ];
-    } else if (user.role === 'vet') {
-      return [
-        { label: "Today's appointments", icon: <Clock className="h-5 w-5" /> },
-        { label: "Patient records", icon: <FileText className="h-5 w-5" /> },
-        { label: "Update prescriptions", icon: <FileText className="h-5 w-5" /> }
-      ];
-    } else {
-      return [
-        { label: "Manage staff", icon: <Users className="h-5 w-5" /> },
-        { label: "Clinic schedule", icon: <Calendar className="h-5 w-5" /> },
-        { label: "Manage inventory", icon: <Activity className="h-5 w-5" /> }
-      ];
-    }
+  const handleAddPet = () => {
+    // In a real app, this would open a form to add a new pet
+    toast({
+      title: "Add Pet",
+      description: "This would open a form to add a new pet.",
+    });
+  };
+
+  const handleScheduleAppointment = (petId: string) => {
+    toast({
+      title: "Schedule Appointment",
+      description: `Scheduling appointment for pet ID: ${petId}`,
+    });
+  };
+
+  const handleUpdateRecords = (petId: string) => {
+    toast({
+      title: "Update Records",
+      description: `Updating records for pet ID: ${petId}`,
+    });
   };
 
   const getWelcomeMessage = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 18) return "Good afternoon";
-    return "Good evening";
+    const timeOfDay = hour < 12 ? "morning" : hour < 18 ? "afternoon" : "evening";
+    const activePet = getActivePet();
+    
+    if (user && activePet) {
+      return `Good ${timeOfDay}, ${user.name}! Here's what's new with ${activePet.name}.`;
+    } else if (user && pets.length === 0) {
+      return `Good ${timeOfDay}, ${user.name}! Let's add your pet.`;
+    } else {
+      return `Good ${timeOfDay}!`;
+    }
   };
+
+  if (!user) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+
+  const activePet = getActivePet();
   
   return (
     <div className="flex min-h-screen bg-background">
@@ -88,7 +142,7 @@ const Dashboard = () => {
         <nav className="flex flex-col space-y-1">
           <NavItem icon={<Home />} label="Dashboard" active />
           <NavItem icon={<Calendar />} label="Appointments" />
-          <NavItem icon={<FileText />} label="Records" />
+          <NavItem icon={<FileText />} label="Health Records" />
           <NavItem icon={<Users />} label="Community" />
           <NavItem icon={<Settings />} label="Settings" />
         </nav>
@@ -120,120 +174,291 @@ const Dashboard = () => {
           {/* Welcome Banner */}
           <div className="bg-gradient-to-r from-primary/10 to-secondary/20 rounded-xl p-6 animate-fade-in">
             <h1 className="text-2xl font-bold text-foreground">
-              {getWelcomeMessage()}, {user.name}!
+              {getWelcomeMessage()}
             </h1>
             <p className="text-muted-foreground mt-1">
-              {user.role === 'pet_owner' 
-                ? 'Manage your pets and appointments' 
-                : user.role === 'vet' 
-                  ? 'Your schedule and patient records are up to date'
-                  : 'Manage your clinic operations and staff'}
+              {activePet 
+                ? `Keep ${activePet.name} healthy and happy—here's your next step.` 
+                : 'Start managing your pet's health information.'}
             </p>
           </div>
 
-          {/* Quick Actions and Profile Section */}
+          {/* Pet Selection (if multiple pets) */}
+          {pets.length > 1 && (
+            <div className="flex overflow-x-auto gap-4 py-2 px-1 -mx-1">
+              {pets.map(pet => (
+                <button
+                  key={pet.id}
+                  onClick={() => setActivePetId(pet.id)}
+                  className={`flex-shrink-0 flex flex-col items-center p-2 rounded-lg transition-all ${
+                    pet.id === activePetId 
+                      ? 'bg-primary/10 ring-1 ring-primary/30' 
+                      : 'hover:bg-muted'
+                  }`}
+                >
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-1">
+                    {pet.photoUrl ? (
+                      <img 
+                        src={pet.photoUrl} 
+                        alt={pet.name} 
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                    ) : (
+                      <Paw className="h-6 w-6 text-primary/70" />
+                    )}
+                  </div>
+                  <span className="text-sm font-medium truncate max-w-[80px]">{pet.name}</span>
+                </button>
+              ))}
+              <button
+                onClick={handleAddPet}
+                className="flex-shrink-0 flex flex-col items-center p-2 rounded-lg hover:bg-muted transition-all"
+              >
+                <div className="w-12 h-12 bg-muted/50 rounded-full flex items-center justify-center mb-1">
+                  <PlusCircle className="h-6 w-6 text-muted-foreground" />
+                </div>
+                <span className="text-sm text-muted-foreground">Add Pet</span>
+              </button>
+            </div>
+          )}
+
+          {/* Main Grid Layout */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {/* Profile Card */}
-            <Card className="md:row-span-2 hover:shadow-md transition-all duration-300">
+            {/* Pet Profile Card */}
+            <Card className="md:row-span-2 hover:shadow-md transition-all duration-300 animate-slide-up">
               <CardHeader>
-                <CardTitle>Profile</CardTitle>
+                <CardTitle>{pets.length === 0 ? "Add Your Pet" : "Pet Profile"}</CardTitle>
                 <CardDescription>
-                  Your account information
+                  {pets.length === 0 ? "Get started by adding your pet" : "Your pet's information"}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-col space-y-4">
-                  <div className="w-24 h-24 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-2">
-                    <span className="text-3xl font-semibold text-primary">
+                {pets.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center space-y-4 py-8">
+                    <div className="w-24 h-24 bg-muted/50 rounded-full flex items-center justify-center">
+                      <Paw className="h-12 w-12 text-muted-foreground/50" />
+                    </div>
+                    <p className="text-muted-foreground text-center">
+                      Add your pet to get personalized care recommendations
+                    </p>
+                    <Button 
+                      onClick={handleAddPet}
+                      className="mt-2"
+                    >
+                      <PlusCircle className="mr-2 h-4 w-4" />
+                      Add Pet
+                    </Button>
+                  </div>
+                ) : activePet ? (
+                  <div className="flex flex-col space-y-6">
+                    <div className="flex flex-col items-center">
+                      <div className="w-28 h-28 bg-primary/10 rounded-full flex items-center justify-center mb-4 relative group">
+                        {activePet.photoUrl ? (
+                          <img 
+                            src={activePet.photoUrl} 
+                            alt={activePet.name} 
+                            className="w-full h-full object-cover rounded-full"
+                          />
+                        ) : (
+                          <Paw className="h-12 w-12 text-primary/70" />
+                        )}
+                        <button className="absolute bottom-0 right-0 bg-background rounded-full p-1 shadow-sm border border-border opacity-0 group-hover:opacity-100 transition-opacity">
+                          <PlusCircle className="h-4 w-4 text-muted-foreground" />
+                        </button>
+                      </div>
+                      <h3 className="text-xl font-semibold">{activePet.name}</h3>
+                      <p className="text-muted-foreground text-sm">
+                        {activePet.breed} • {activePet.age} {activePet.age === 1 ? 'year' : 'years'} old
+                      </p>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      {activePet.nextAppointment && (
+                        <div className="flex items-start space-x-3 p-3 rounded-lg bg-primary/5">
+                          <Calendar className="h-5 w-5 text-primary mt-0.5" />
+                          <div>
+                            <p className="font-medium text-sm">Next Appointment</p>
+                            <p className="text-muted-foreground text-sm">
+                              {new Date(activePet.nextAppointment).toLocaleDateString(undefined, {
+                                weekday: 'long',
+                                month: 'short',
+                                day: 'numeric'
+                              })}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {activePet.nextVaccination && (
+                        <div className="flex items-start space-x-3 p-3 rounded-lg bg-secondary/5">
+                          <Syringe className="h-5 w-5 text-secondary mt-0.5" />
+                          <div>
+                            <p className="font-medium text-sm">Next Vaccination</p>
+                            <p className="text-muted-foreground text-sm">
+                              {new Date(activePet.nextVaccination).toLocaleDateString(undefined, {
+                                weekday: 'long',
+                                month: 'short',
+                                day: 'numeric'
+                              })}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="pt-2">
+                      <Button 
+                        onClick={() => handleScheduleAppointment(activePet.id)}
+                        variant="outline"
+                        className="w-full justify-start mb-2 hover:bg-primary/5"
+                      >
+                        <Calendar className="mr-2 h-4 w-4 text-primary" />
+                        Schedule Appointment
+                      </Button>
+                      <Button 
+                        onClick={() => handleUpdateRecords(activePet.id)}
+                        variant="outline"
+                        className="w-full justify-start hover:bg-primary/5"
+                      >
+                        <FileText className="mr-2 h-4 w-4 text-primary" />
+                        Update Health Records
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center space-y-4 py-8">
+                    <p className="text-muted-foreground">Select a pet to view details</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Health Reminders Card */}
+            {activePet && (
+              <Card className="hover:shadow-md transition-all duration-300 animate-fade-in">
+                <CardHeader>
+                  <CardTitle>Health Reminders</CardTitle>
+                  <CardDescription>
+                    Upcoming care for {activePet.name}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="bg-amber-50 border border-amber-100 rounded-lg p-4 flex items-start space-x-3">
+                      <Bell className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-medium text-sm text-amber-800">Annual Checkup Coming Up</p>
+                        <p className="text-amber-700 text-sm">
+                          Remember to book {activePet.name}'s annual checkup next month
+                        </p>
+                      </div>
+                    </div>
+                    <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 flex items-start space-x-3">
+                      <Activity className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-medium text-sm text-blue-800">Weight Check Reminder</p>
+                        <p className="text-blue-700 text-sm">
+                          Time to check if {activePet.name}'s weight is on track
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Recent Activity Card */}
+            {activePet && (
+              <Card className="hover:shadow-md transition-all duration-300 animate-fade-in">
+                <CardHeader>
+                  <CardTitle>Recent Activity</CardTitle>
+                  <CardDescription>
+                    Latest updates for {activePet.name}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="border-l-2 border-primary/30 pl-4 py-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <FileText className="h-4 w-4 text-primary" />
+                        <p className="text-sm font-medium">Health Record Updated</p>
+                      </div>
+                      <p className="text-muted-foreground text-xs">3 days ago</p>
+                    </div>
+                    <div className="border-l-2 border-primary/30 pl-4 py-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Calendar className="h-4 w-4 text-primary" />
+                        <p className="text-sm font-medium">Appointment Scheduled</p>
+                      </div>
+                      <p className="text-muted-foreground text-xs">1 week ago</p>
+                    </div>
+                    <div className="border-l-2 border-primary/30 pl-4 py-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Syringe className="h-4 w-4 text-primary" />
+                        <p className="text-sm font-medium">Vaccination Complete</p>
+                      </div>
+                      <p className="text-muted-foreground text-xs">2 weeks ago</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Account Info (Minimized) */}
+            <Card className="hover:shadow-md transition-all duration-300 animate-slide-up">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Your Account</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center space-x-3 mb-2">
+                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                    <span className="text-lg font-semibold text-primary">
                       {user.name.charAt(0).toUpperCase()}
                     </span>
                   </div>
-                  <div className="space-y-3">
-                    <div className="space-y-1">
-                      <h4 className="text-sm font-semibold text-muted-foreground">Name</h4>
-                      <p className="text-foreground">{user.name}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <h4 className="text-sm font-semibold text-muted-foreground">Email</h4>
-                      <p className="text-foreground">{user.email}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <h4 className="text-sm font-semibold text-muted-foreground">Role</h4>
-                      <p className="text-foreground">{user.role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
-                    </div>
-                    {user.provider && (
-                      <div className="space-y-1">
-                        <h4 className="text-sm font-semibold text-muted-foreground">Sign-in Method</h4>
-                        <p className="text-foreground">{user.provider.charAt(0).toUpperCase() + user.provider.slice(1)}</p>
-                      </div>
-                    )}
+                  <div className="overflow-hidden">
+                    <h4 className="font-medium truncate">{user.name}</h4>
+                    <p className="text-sm text-muted-foreground truncate">{user.email}</p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Quick Actions Card */}
-            <Card className="hover:shadow-md transition-all duration-300">
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-                <CardDescription>
-                  Frequently used features
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-3">
-                  {getQuickActions().map((action, index) => (
-                    <Button 
-                      key={index} 
-                      variant="outline" 
-                      className="w-full justify-start hover:bg-primary/5 transition-colors duration-200 group"
-                    >
-                      <span className="mr-2 text-muted-foreground group-hover:text-primary transition-colors duration-200">
-                        {action.icon}
-                      </span>
-                      {action.label}
-                    </Button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Recent Activity Card */}
-            <Card className="hover:shadow-md transition-all duration-300">
-              <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>
-                  Your latest interactions
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="text-center py-8">
-                    <Activity className="h-12 w-12 mx-auto text-muted-foreground opacity-20 mb-3" />
-                    <p className="text-muted-foreground">No recent activity to display</p>
-                    <p className="text-sm text-muted-foreground/70 mt-1">
-                      Your activity will appear here
-                    </p>
-                  </div>
-                </div>
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start text-sm mt-2"
+                  onClick={() => navigate('/settings')}
+                >
+                  <Settings className="mr-2 h-4 w-4" />
+                  Account Settings
+                </Button>
               </CardContent>
             </Card>
 
             {/* Community Teaser */}
-            <Card className="lg:col-span-2 hover:shadow-md transition-all duration-300">
+            <Card className="lg:col-span-2 hover:shadow-md transition-all duration-300 animate-slide-up">
               <CardHeader>
-                <CardTitle>Community</CardTitle>
+                <CardTitle>Pet Community</CardTitle>
                 <CardDescription>
-                  Connect with other professionals
+                  Connect with other pet owners
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="bg-gradient-to-r from-muted/50 to-muted/30 rounded-lg p-6 text-center">
-                  <Users className="h-10 w-10 mx-auto text-primary/70 mb-4" />
-                  <h3 className="text-lg font-medium mb-2">Join the Clinecto Community</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Connect with other professionals, share knowledge, and grow your network
-                  </p>
+                  {activePet ? (
+                    <>
+                      <Heart className="h-10 w-10 mx-auto text-primary/70 mb-4" />
+                      <h3 className="text-lg font-medium mb-2">Join the Community</h3>
+                      <p className="text-muted-foreground mb-4">
+                        Connect with other {activePet.species.toLowerCase()} owners, share experiences, and get advice
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <Users className="h-10 w-10 mx-auto text-primary/70 mb-4" />
+                      <h3 className="text-lg font-medium mb-2">Join the Pet Owner Community</h3>
+                      <p className="text-muted-foreground mb-4">
+                        Connect with other pet owners, share knowledge, and get advice
+                      </p>
+                    </>
+                  )}
                   <Button variant="default">
                     Explore Community
                   </Button>
