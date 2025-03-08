@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -8,12 +9,21 @@ import RoleSelector from "@/components/home/RoleSelector";
 import DemoRequestForm from "@/components/home/DemoRequestForm";
 
 const Index = () => {
+  const [showDemoModal, setShowDemoModal] = useState(false);
+  
   useEffect(() => {
     document.title = "HealthyPaws - Home";
+    
+    const handleOpenDemoModal = () => setShowDemoModal(true);
+    window.addEventListener('open-demo-modal', handleOpenDemoModal);
+    
+    return () => {
+      window.removeEventListener('open-demo-modal', handleOpenDemoModal);
+    };
   }, []);
 
-  const handleOpenDemoModal = () => {
-    window.dispatchEvent(new CustomEvent('open-demo-modal'));
+  const handleCloseDemoModal = () => {
+    setShowDemoModal(false);
   };
 
   return (
@@ -33,7 +43,7 @@ const Index = () => {
                   Keep track of appointments, vaccinations, weight and more.
                 </p>
                 <div className="space-x-3">
-                  <Button size="lg" onClick={handleOpenDemoModal}>
+                  <Button size="lg" onClick={() => setShowDemoModal(true)}>
                     Request a Demo
                   </Button>
                   <Link to="/register">
@@ -138,7 +148,7 @@ const Index = () => {
         </section>
       </main>
 
-      <DemoRequestForm />
+      {showDemoModal && <DemoRequestForm onClose={handleCloseDemoModal} />}
       <Footer />
     </div>
   );
