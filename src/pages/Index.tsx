@@ -55,7 +55,7 @@ const Index = () => {
               </div>
               <div className="relative">
                 <img
-                  src="/hero-image.png"
+                  src="https://images.unsplash.com/photo-1535268647677-300dbf3d78d1"
                   alt="HealthyPaws Dashboard"
                   className="w-full rounded-lg shadow-lg"
                 />
@@ -119,7 +119,7 @@ const Index = () => {
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
                 <img
-                  src="/community-image.png"
+                  src="https://images.unsplash.com/photo-1649972904349-6e44c42644a7"
                   alt="Pet Community"
                   className="w-full rounded-lg shadow-lg"
                 />

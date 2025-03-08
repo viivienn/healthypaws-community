@@ -57,12 +57,12 @@ const PetProfile = ({
         ) : activePet ? (
           <div className="flex flex-col space-y-6">
             <div className="flex flex-col items-center">
-              <div className="w-28 h-28 bg-primary/10 rounded-full flex items-center justify-center mb-4 relative group">
+              <div className="w-28 h-28 bg-primary/10 rounded-full flex items-center justify-center mb-4 relative group overflow-hidden">
                 {activePet.photoUrl ? (
                   <img 
-                    src={activePet.photoUrl} 
+                    src={activePet.photoUrl}
                     alt={activePet.name} 
-                    className="w-full h-full object-cover rounded-full"
+                    className="w-full h-full object-cover"
                   />
                 ) : (
                   <div className="h-12 w-12 text-primary/70 text-4xl font-light">🐾</div>
